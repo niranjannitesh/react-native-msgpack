@@ -1,22 +1,24 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
 
-const LINKING_ERROR =
-  `The package 'react-native-msgpack' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
+const Msgpack = NativeModules.Msgpack;
 
-const Msgpack = NativeModules.Msgpack
-  ? NativeModules.Msgpack
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+if (Msgpack == null || typeof Msgpack.install !== 'function') {
+  throw new Error('Msgpack native module is not available.');
+}
 
-export function multiply(a: number, b: number): Promise<number> {
-  return Msgpack.multiply(a, b);
+if (Msgpack.install() !== true) {
+  throw new Error('Msgpack native module is not available.');
+}
+
+declare global {
+  function msgpackEncode(data: any): Uint8Array;
+  function msgpackDecode(data: ArrayBuffer): any;
+}
+
+export function encode(data: any): Uint8Array {
+  return global.msgpackEncode(data);
+}
+
+export function decode(data: Uint8Array): any {
+  return global.msgpackDecode(data.buffer);
 }

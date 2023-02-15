@@ -1,20 +1,23 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-msgpack';
+import { StyleSheet, View } from 'react-native';
+import { encode, decode } from 'react-native-msgpack';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
   React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+    const resp = encode({
+      name: 'Tester',
+      a: {
+        b: 'test',
+      },
+      c: [1, 2, 3, 4, 5],
+      d: false,
+    });
+    const t = decode(resp);
+    console.log(t);
+  });
 
-  return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
-  );
+  return <View style={styles.container} />;
 }
 
 const styles = StyleSheet.create({

@@ -1,27 +1,32 @@
 #import "Msgpack.h"
 
+#import <React/RCTBridge+Private.h>
+#import <jsi/jsi.h>
+
 @implementation Msgpack
-RCT_EXPORT_MODULE()
+@synthesize bridge = _bridge;
+@synthesize methodQueue = _methodQueue;
 
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_REMAP_METHOD(multiply,
-                 multiplyWithA:(double)a withB:(double)b
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
-{
-    NSNumber *result = @(msgpack::multiply(a, b));
 
-    resolve(result);
+RCT_EXPORT_MODULE(Msgpack)
+
+
++ (BOOL)requiresMainQueueSetup {
+  return YES;
 }
 
-// Don't compile this code when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(install)
 {
-    return std::make_shared<facebook::react::NativeMsgpackSpecJSI>(params);
+  RCTBridge *bridge = [RCTBridge currentBridge];
+  RCTCxxBridge *cxxBridge = (RCTCxxBridge *) bridge;
+  if (cxxBridge == nil) {
+    return @false;
+  }
+  if (cxxBridge.runtime == nil) {
+    return @false;
+  }
+  install(*(facebook::jsi::Runtime *) cxxBridge.runtime);
+  return @true;
 }
-#endif
 
 @end

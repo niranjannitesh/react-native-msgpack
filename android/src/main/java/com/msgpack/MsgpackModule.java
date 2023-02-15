@@ -1,5 +1,7 @@
 package com.msgpack;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
@@ -7,6 +9,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.bridge.JavaScriptContextHolder;
 
 @ReactModule(name = MsgpackModule.NAME)
 public class MsgpackModule extends ReactContextBaseJavaModule {
@@ -23,15 +26,24 @@ public class MsgpackModule extends ReactContextBaseJavaModule {
   }
 
   static {
+    Log.i(NAME, "Loading C++ library...");
     System.loadLibrary("cpp");
   }
 
-  private static native double nativeMultiply(double a, double b);
+  private native void nativeInstall(long jsi);
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  @ReactMethod
-  public void multiply(double a, double b, Promise promise) {
-    promise.resolve(nativeMultiply(a, b));
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  public boolean install() {
+    try {
+      ReactApplicationContext reactContext = getReactApplicationContext();
+      JavaScriptContextHolder contextHolder = reactContext.getJavaScriptContextHolder();
+      this.nativeInstall(contextHolder.get());
+      Log.i(NAME, "Successfully installed!");
+      return true;
+    } catch (Exception exception) {
+      Log.e(NAME, "Failed to install JSI Bindings!", exception);
+      return false;
+    }
   }
 }

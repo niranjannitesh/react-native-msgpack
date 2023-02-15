@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-#import "react-native-msgpack.h"
+#import "react-native-msgpack.hpp"
 #endif
 
 #ifdef RCT_NEW_ARCH_ENABLED

@@ -1,8 +1,9 @@
 #include <jni.h>
-#include "react-native-msgpack.h"
+#include "react-native-msgpack.hpp"
 
-extern "C"
-JNIEXPORT jint JNICALL
-Java_com_msgpack_MsgpackModule_nativeMultiply(JNIEnv *env, jclass type, jdouble a, jdouble b) {
-    return msgpack::multiply(a, b);
+extern "C" JNIEXPORT void JNICALL
+Java_com_msgpack_MsgpackModule_nativeInstall(JNIEnv *env, jobject thiz, jlong jsi)
+{
+  auto runtime = reinterpret_cast<jsi::Runtime *>(jsi);
+  install(*runtime);
 }

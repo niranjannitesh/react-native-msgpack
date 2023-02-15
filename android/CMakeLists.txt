@@ -1,15 +1,36 @@
-cmake_minimum_required(VERSION 3.4.1)
+project(ReactNativeMsgPack)
+cmake_minimum_required(VERSION 3.9.0)
 
+set (PACKAGE_NAME "react-native-msgpack")
+set (BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 set (CMAKE_VERBOSE_MAKEFILE ON)
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
+
+include_directories(
+        ../cpp
+)
 
 add_library(cpp
             SHARED
-            ../cpp/react-native-msgpack.cpp
             cpp-adapter.cpp
+            ../cpp/react-native-msgpack.hpp
+            ../cpp/cmp.c
+            ../cpp/cmp.h
+            ../cpp/msgpack.hpp
 )
 
-# Specifies a path to native header files.
-include_directories(
-            ../cpp
+set_target_properties(
+        cpp PROPERTIES
+        CXX_STANDARD 17
+        CXX_EXTENSIONS OFF
+        POSITION_INDEPENDENT_CODE ON
+)
+
+
+find_package(ReactAndroid REQUIRED CONFIG)
+
+target_link_libraries(
+        cpp
+        ReactAndroid::jsi
+        android
 )

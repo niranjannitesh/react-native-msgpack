@@ -11,11 +11,12 @@ npm install react-native-msgpack
 ## Usage
 
 ```js
-import { multiply } from 'react-native-msgpack';
+import { encode, decode } from 'react-native-msgpack';
 
 // ...
 
-const result = await multiply(3, 7);
+const result = encode({ hello: 'world' });
+const decoded = decode(result);
 ```
 
 ## Contributing

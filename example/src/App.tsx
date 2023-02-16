@@ -63,7 +63,7 @@ const obj = {
   online_status: false,
 };
 
-const RUN_CYCLES = 100;
+const RUN_CYCLES = 10000;
 const n = () => {
   console.log('comuting with react-native-msgpack');
   const startTime = Date.now();

@@ -5,6 +5,8 @@
 #include <vector>
 #include <jsi/jsi.h>
 #include "cmp.h"
+#include <iostream>
+#include <sstream>
 
 using namespace facebook;
 
@@ -97,13 +99,11 @@ static bool mp_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 
 struct MessagePackWriter
 {
-  std::vector<uint8_t> data;
+  std::stringstream stream;
 
   size_t write(void *data, size_t count)
   {
-    size_t start = this->data.size();
-    this->data.resize(start + count);
-    std::memcpy(this->data.data() + start, data, count);
+    stream.write(static_cast<const char *>(data), count);
     return count;
   }
 };
@@ -120,7 +120,8 @@ std::vector<uint8_t> write(jsi::Runtime &rt, const jsi::Value &value)
   std::unique_ptr<cmp_ctx_s> ctx(new cmp_ctx_s);
   cmp_init(ctx.get(), &writer, mp_reader, NULL, mp_writer);
   writeValue(ctx.get(), rt, value);
-  return std::move(writer.data);
+  const std::string &data = writer.stream.str();
+  return std::vector<uint8_t>(data.begin(), data.end());
 }
 
 jsi::Value readValue(cmp_ctx_t *ctx, jsi::Runtime &rt)

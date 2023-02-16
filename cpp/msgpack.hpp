@@ -5,8 +5,6 @@
 #include <vector>
 #include <jsi/jsi.h>
 #include "cmp.h"
-#include <iostream>
-#include <sstream>
 
 using namespace facebook;
 
@@ -99,11 +97,18 @@ static bool mp_reader(cmp_ctx_t *ctx, void *data, size_t limit)
 
 struct MessagePackWriter
 {
-  std::stringstream stream;
+  std::vector<uint8_t> data;
+
+  MessagePackWriter()
+  {
+    data.reserve(1024);
+  }
 
   size_t write(void *data, size_t count)
   {
-    stream.write(static_cast<const char *>(data), count);
+    size_t prev_size = this->data.size();
+    this->data.resize(prev_size + count);
+    std::move(static_cast<const uint8_t *>(data), static_cast<const uint8_t *>(data) + count, this->data.data() + prev_size);
     return count;
   }
 };
@@ -114,14 +119,14 @@ static size_t mp_writer(cmp_ctx_t *ctx, const void *data, size_t count)
   return mp->write(const_cast<void *>(data), count);
 }
 
-std::vector<uint8_t> write(jsi::Runtime &rt, const jsi::Value &value)
+void write(jsi::Runtime &rt, const jsi::Value &value, std::vector<uint8_t> &data)
 {
   MessagePackWriter writer;
   std::unique_ptr<cmp_ctx_s> ctx(new cmp_ctx_s);
   cmp_init(ctx.get(), &writer, mp_reader, NULL, mp_writer);
   writeValue(ctx.get(), rt, value);
-  const std::string &data = writer.stream.str();
-  return std::vector<uint8_t>(data.begin(), data.end());
+  writer.data.shrink_to_fit();
+  data.swap(writer.data);
 }
 
 jsi::Value readValue(cmp_ctx_t *ctx, jsi::Runtime &rt)

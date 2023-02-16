@@ -12,7 +12,8 @@ void install(jsi::Runtime &rt)
                         const jsi::Value *args,
                         size_t count) -> jsi::Value
   {
-    auto data = write(rt, std::move(args[0]));
+    std::vector<uint8_t> data;
+    write(rt, args[0], data);
     auto size = data.size();
     jsi::ArrayBuffer arrayBuffer =
         rt.global()
@@ -20,7 +21,7 @@ void install(jsi::Runtime &rt)
             .callAsConstructor(rt, static_cast<int>(size))
             .asObject(rt)
             .getArrayBuffer(rt);
-    std::memcpy(arrayBuffer.data(rt), data.data(), size);
+    std::memcpy(arrayBuffer.data(rt), std::move(data).data(), size);
     auto typedArray = rt.global()
                           .getPropertyAsFunction(rt, "Uint8Array")
                           .callAsConstructor(rt, std::move(arrayBuffer))

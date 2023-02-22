@@ -105,16 +105,16 @@ if (isNewArchitectureEnabled()) {
 }
 
 
-tasks.whenTaskAdded { task ->
-  if (task.name.contains("configureCMakeDebug")) {
-    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
-      task.dependsOn(it)
-    }
-  }
-  // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
-  if (task.name.contains("configureCMakeRel")) {
-    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
-      task.dependsOn(it)
-    }
-  }
-}
+// tasks.whenTaskAdded { task ->
+//   if (task.name.contains("configureCMakeDebug")) {
+//     rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
+//       task.dependsOn(it)
+//     }
+//   }
+//   // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
+//   if (task.name.contains("configureCMakeRel")) {
+//     rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
+//       task.dependsOn(it)
+//     }
+//   }
+// }

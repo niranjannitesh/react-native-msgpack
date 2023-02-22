@@ -1,11 +1,14 @@
 buildscript {
   repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
     google()
     mavenCentral()
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.2.1"
+    classpath "com.android.tools.build:gradle:7.2.2"
   }
 }
 
@@ -90,10 +93,8 @@ repositories {
 
 
 dependencies {
-  // For < 0.71, this will be from the local maven repo
-  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native"
+  implementation "com.facebook.react:react-android:+"
 }
 
 if (isNewArchitectureEnabled()) {
@@ -105,16 +106,16 @@ if (isNewArchitectureEnabled()) {
 }
 
 
-// tasks.whenTaskAdded { task ->
-//   if (task.name.contains("configureCMakeDebug")) {
-//     rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
-//       task.dependsOn(it)
-//     }
-//   }
-//   // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
-//   if (task.name.contains("configureCMakeRel")) {
-//     rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
-//       task.dependsOn(it)
-//     }
-//   }
-// }
+tasks.whenTaskAdded { task ->
+  if (task.name.contains("configureCMakeDebug")) {
+    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
+  // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
+  if (task.name.contains("configureCMakeRel")) {
+    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
+      task.dependsOn(it)
+    }
+  }
+}

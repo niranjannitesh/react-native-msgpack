@@ -29,11 +29,7 @@ set_target_properties(
         POSITION_INDEPENDENT_CODE ON
 )
 
-
-find_package(ReactAndroid REQUIRED CONFIG)
-
 target_link_libraries(
         cpp
-        ReactAndroid::jsi
         android
 )

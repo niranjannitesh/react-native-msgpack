@@ -8,6 +8,9 @@ set (CMAKE_CXX_STANDARD 17)
 
 include_directories(
         ../cpp
+        ../../react-native/React
+        ../../react-native/React/Base
+        ../../react-native/ReactCommon/jsi
 )
 
 add_library(cpp

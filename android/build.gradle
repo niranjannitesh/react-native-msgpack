@@ -94,7 +94,7 @@ repositories {
 
 dependencies {
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-android:+"
+  implementation "com.facebook.react:react-native:+"
 }
 
 if (isNewArchitectureEnabled()) {
@@ -102,20 +102,5 @@ if (isNewArchitectureEnabled()) {
     jsRootDir = file("../src/")
     libraryName = "Msgpack"
     codegenJavaPackageName = "com.msgpack"
-  }
-}
-
-
-tasks.whenTaskAdded { task ->
-  if (task.name.contains("configureCMakeDebug")) {
-    rootProject.getTasksByName("packageReactNdkDebugLibs", true).forEach {
-      task.dependsOn(it)
-    }
-  }
-  // We want to add a dependency for both configureCMakeRelease and configureCMakeRelWithDebInfo
-  if (task.name.contains("configureCMakeRel")) {
-    rootProject.getTasksByName("packageReactNdkReleaseLibs", true).forEach {
-      task.dependsOn(it)
-    }
   }
 }
